@@ -3,8 +3,10 @@
 ## 시작하기 전에...
 
 <br/>
+<p>
 <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=TypeScript&logoColor=white"/>
 <img src="https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=white"/>
+<p/>
 
 - 현재 `Front-End` 와 `Back-end` 는 다른 환경에서 개발하고 있음
 - **Proxy** 를 사용하지 않음
@@ -50,7 +52,7 @@ function App() {
 
 <br/>
 
-로그인 요청을 제대로 받아오는지 확인하기 위해 Form 을 채워 POST 요청을 함
+로그인 요청을 제대로 받아오는지 확인하기 위해 **Form** 을 채워 `POST` 요청을 함
 
 <br/>
 <img src="md_resources/resource_04.png" width="400"/>

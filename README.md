@@ -73,3 +73,77 @@ function App() {
 일치하는 데이터가 있을 경우 해당 아이디 비밀번호 뿐만 아니라 다른 정보도 정상적으로 보이는 것을 확인
 
 추후 **토큰화** 예정
+
+<br/>
+<br/>
+
+> ## https 로 변경하기
+
+<br/>
+
+- 기존의 `localhost` 는 **http** 를 기반으로 동작하는데, **http** 를 사용하면 쿠키 사용에 번거로움이 있으므로 변경
+- **https** 로 변경하기 위해 `window` 는 `choco`, `mac` 은 `brew` 를 사용해 `mksert` 를 사용
+- [참고자료 1](https://velog.io/@horang-e/React-localhost-%ED%99%98%EA%B2%BD-HTTPS%EB%A1%9C-%EB%B0%94%EA%BE%B8%EA%B8%B0Windows) [참고자료 2](https://365ok.co.kr/okdown/7802)
+
+<br/>
+
+```json
+  "scripts": {
+    "start": "set HTTPS=true&&react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  } // 단순히 set HTTPS 를 이용해 https 를 만들 수 있다.
+```
+
+<br/>
+<img src="md_resources/resource_05.png" width="400"/>
+<br/>
+<br/>
+
+하지만 인증서가 없어서 위험하다는 경고 메세지가 출력
+
+개발하는데에는 지장이 없지만 해결해보도록 하자
+
+<br/>
+
+```terminal
+choco install mkcert // choco 를 사용해 mkcert 를 설치
+mkcert -install // 인증서 발급을 위해 해당 프로젝트의 최상위 디렉토리로 이동 후 설치
+```
+
+<br/>
+
+해당하는 `key` 와 `cert` 파일을 생성해 주어야 하므로
+
+```terminal
+mkcert -key-file ./key.pem -cert-file ./cert.pem "localhost"
+```
+
+<br/>
+<img src="md_resources/resource_06.png" height="280"/>
+<br/>
+
+그 이후 `SSL_CRT_FILE` 과 `SSL_KEY_FILE` 을 각각 **cert.pem**, **key.pem** 으로 매치 시켜줌
+
+```json
+  "scripts": {
+    "start": "set HTTPS=true&&set SSL_CRT_FILE=cert.pem&&set SSL_KEY_FILE=key.pem&&react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+```
+
+<br/>
+
+```
+npm start
+```
+
+<br/>
+<img src="md_resources/resource_07.png" width="400"/>
+<br/>
+<br/>
+
+경고창이 사라지고 `localhost` 가 **https** 로 정상 출력 되는 것을 볼 수 있음

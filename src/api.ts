@@ -3,7 +3,7 @@ import { useMutation } from "react-query";
 import { IFormData } from "./App";
 import { json } from "stream/consumers";
 
-const API_URL = `https://nineto6.kro.kr:8080/api/user/login`;
+export const API_URL = `https://nineto6.kro.kr:8080/api/user/login`;
 // 변경된 URL 주소
 
 export async function getData() {

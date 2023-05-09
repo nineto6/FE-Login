@@ -10,15 +10,15 @@ export interface IFormData {
 }
 
 function App() {
-  // const { data, isLoading, refetch } = useQuery("userData", getData, {
-  //   onSuccess: (data) => {
-  //     console.log(data);
-  //   },
+  const { data, isLoading, refetch } = useQuery("userData", getData, {
+    onSuccess: (data) => {
+      console.log(data);
+    },
 
-  //   onError: (error) => {
-  //     console.log(error);
-  //   },
-  // }); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
+    onError: (error) => {
+      console.log(error);
+    },
+  }); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
 
   const { mutate } = OnPostData();
 
@@ -66,13 +66,13 @@ function App() {
         <button>확인</button>
       </form>
 
-      {/* <ul>
-        {data?.map((user: IFormData, index: any) => (
+      <ul>
+        {/* {data?.((user: IFormData, index: any) => (
           <li key={index}>
             {user.userPw}, {user.userId}
           </li>
-        ))}
-      </ul> */}
+        ))} */}
+      </ul>
     </div>
   );
 }

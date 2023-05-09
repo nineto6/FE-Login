@@ -23,7 +23,6 @@ export const OnPostData = () => {
 
 export const postData = async (data: IFormData) => {
   return await axios.post(API_URL, data).then((response) => {
-    // const { autorization } = response.headers;
     if (response.status === 200) {
       axios
         .post(API_URL, data)

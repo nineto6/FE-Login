@@ -147,3 +147,81 @@ npm start
 <br/>
 
 경고창이 사라지고 `localhost` 가 **https** 로 정상 출력 되는 것을 볼 수 있음
+
+<br/>
+<hr/>
+
+###### 20230509
+
+> ## Header Autorization 받아오기
+
+<br/>
+
+**Back-end** 에서 `header` 의 `Authorization` 을 담아 주기 위해 테스트.
+
+테스트 `url` 에 `POST` 요청을 보냈으며 `request:200` 이 정상적으로 뜨는 것을 확인
+
+<br/>
+<img src="md_resources/resource_08.png" width="400"/>
+<br/>
+<img src="md_resources/resource_09.png" width="400"/>
+<br/>
+
+응답으로 받은 `result` 에 `Bearer + TOKEN` 값이 제대로 담겨 온 것을 확인 할 수 있음
+
+이제 해당 테스트 url 이 아닌 기존에 사용하던 `api/user/login url` 에 연결
+
+<br/>
+<img src="md_resources/resource_10.png" width="400"/>
+<br/>
+
+본 url 인 `api/user/login url` 의 **request-header** 에 `authorization` 이 제대로 담긴 것을 확인 할 수 있음
+
+이제 해당하는 `TOKEN` 값을 `localStorage` 에 담아 사용 할 것
+
+<br/>
+<hr/>
+<br/>
+
+> ## localStorage 에 담기
+
+<br/>
+
+- `localStorage` 는 브라우저 내 **token** 을 저장해 다시 켜도 해당 값을 사용하기 위함 (login, logout)
+- **응답의 header** (response.header) 는 `JSON` 형식이므로 **그냥 접근하면 null or undefined 오류**가 나므로 `JSON.stringify` 로 수정해 접근해야 함
+
+<br/>
+
+```TS
+// api.ts
+export const postData = async (data: IFormData) => {
+  return await axios.post(API_URL, data).then((response) => {
+    if (response.status === 200) {
+      axios
+        .post(API_URL, data)
+        .then((response) => {
+          console.log(response);
+          let ACCESS_TOKEN = JSON.stringify(response.headers["authorization"]);
+          // JSON 형식이므로 JSON.stringify 를 사용해 주어야 한다. (*대소문자 주의*)
+          // ACCESS_TOKEN 으로 초기화
+          console.log(ACCESS_TOKEN);
+          localStorage.setItem("loginToken", ACCESS_TOKEN);
+
+          console.log(localStorage.getItem("loginToken"));
+          // localStorage 에 제대로 값이 담겼는지 확인하기 위해 사용
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  });
+};
+```
+
+<br/>
+<img src="md_resources/resource_11.png" height="200"/>
+<br/>
+<img src="md_resources/resource_12.png" height="200"/>
+<br/>
+
+`F12 > application > local storage` 를 확인해보면 해당 `localStorage` 에 정상적으로 `Token` 값이 적재 된 것을 볼 수 있음

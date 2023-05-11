@@ -227,6 +227,44 @@ export const postData = async (data: IFormData) => {
 `F12 > application > local storage` 를 확인해보면 해당 `localStorage` 에 정상적으로 `Token` 값이 적재 된 것을 볼 수 있음
 
 <br/>
+
+```TSX
+//api.ts
+
+// Header 에 값 넣어주는 방법 1.
+  export async function getData() {
+    const request: HeadersInit = new Headers();
+    // Headers 로 직접 헤더를 생성
+    let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
+    // 새 Header 에 받아서 JSON 형식으로 바꿔 사용
+    // JSON.parse 는 ts 내에서 || 로 빈 {} 값을 보내주어야 type error가 나지않음
+
+    if (!token) {
+      throw new Error("error");
+    } else {
+      request.set("authorization", token);
+      // header 에 authorization 으로 값을 세팅 후
+    }
+
+    return await fetch(BOARD_URL, {
+      method: "GET",
+      headers: request, // 넣어줌
+    }).then((response) => {
+      ...
+
+// Header 에 값 넣어주는 방법 2
+  export const axiosPostData = async (data: IBoardData) => {
+    return await axios.post(BOARD_URL, data, {
+      headers: {
+        Authorization: await JSON.parse(
+          localStorage.getItem("loginToken") || "{}"
+        ),
+      },
+    });
+  };
+```
+
+<br/>
 <hr/>
 
 ###### 20230511

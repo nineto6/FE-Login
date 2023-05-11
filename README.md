@@ -225,3 +225,92 @@ export const postData = async (data: IFormData) => {
 <br/>
 
 `F12 > application > local storage` 를 확인해보면 해당 `localStorage` 에 정상적으로 `Token` 값이 적재 된 것을 볼 수 있음
+
+<br/>
+<hr/>
+
+###### 20230511
+
+> ## get-board (GET)
+
+<br/>
+
+- 게시글 임시정보인 `board` 를 가져오기 위해 `axios` 를 사용
+- `header > Authorization` 에 `localStorage` 를 적재해 요청하는 것이 관건
+- **header** 의 토큰이 존재하지 않을 시 요청을 거부함
+
+<br/>
+
+```TSX
+  export async function axiosGetData() {
+    const request: HeadersInit = new Headers();
+    let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
+    // 새 Header 에 받아서 JSON 형식으로 바꿔 사용
+    // JSON.parse 는 ts 내에서 || 로 빈 {} 값을 보내주어야 type error가 나지않음
+
+    if (!token) {
+      throw new Error("error");
+    } else {
+      request.set("authorization", token);
+    }
+
+    return axios.get(BOARD_URL, {
+      headers: {
+        Authorization: token,
+      },
+    });
+  }
+```
+
+<br/>
+<img src="md_resources/resource_13.png" width="300"/>
+<br/>
+
+<br/>
+
+> ## write-board (POST)
+
+<br/>
+
+- 게시글을 작성하기 위해 임시 `form` 을 생성
+- 원래 사용하던 로그인의 `useQuery` 와 겹치므로 `rename` 필요
+- `localStorage` 에 담긴 토큰이 다르면 글 작성 시 **Back-End** 에서 국적이 바뀌게 설정
+
+<br/>
+
+```TSX
+//api.ts
+  export const OnAxiosPostData = () => {
+    return useMutation(axiosPostData);
+  };
+
+  export const axiosPostData = async (data: IBoardData) => {
+    return await axios.post(BOARD_URL, data, {
+      headers: {
+        Authorization: await JSON.parse(
+          localStorage.getItem("loginToken") || "{}"
+        ),
+      },
+    });
+  };
+
+//App.tsx
+  const {
+    register: boardReg,
+    handleSubmit: boardHandle,
+    setError: boardSetError,
+    formState: { errors: boardErrors },
+  } = useForm<IBoardData>();
+
+  ...
+
+  return (
+
+  )
+```
+
+<br/>
+<img src="md_resources/resource_14.png" height="400"/>
+<br/>
+
+다른 토큰으로 로그인 후 글을 작성 시 정상적으로 국적이 바뀌는 모습

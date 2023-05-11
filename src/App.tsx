@@ -2,25 +2,56 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components";
-import { getData, OnPostData, postData } from "./api";
+import {
+  axiosGetData,
+  getData,
+  OnAxiosPostData,
+  OnPostData,
+  postData,
+} from "./api";
 
 export interface IFormData {
   userId: String;
   userPw?: String;
 }
 
+export interface IBoardData {
+  boardTitle: string;
+  boardContent: string;
+}
+
+interface IDetailProps {
+  boardSq: number;
+  userNm: string;
+  boardTitle: string;
+  boardContent: string;
+}
+
+interface IInfoProps {
+  result: IDetailProps[];
+  resultCode: number;
+  resultMsg: string;
+}
+
 function App() {
-  const { data, isLoading, refetch } = useQuery("userData", getData, {
+  // const { data, isLoading, refetch } = useQuery("userData", getData, {
+  //   onSuccess: (data) => {
+  //     console.log(data);
+  //   },
+
+  //   onError: (error) => {
+  //     console.log(error);
+  //   },
+  // }); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
+
+  const { data, isLoading } = useQuery("infoData", axiosGetData, {
     onSuccess: (data) => {
       console.log(data);
     },
-
-    onError: (error) => {
-      console.log(error);
-    },
-  }); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
+  });
 
   const { mutate } = OnPostData();
+  const { mutate: axiosMutate } = OnAxiosPostData();
 
   const {
     register,
@@ -32,6 +63,17 @@ function App() {
   const onValid = (data: IFormData) => {
     mutate(data);
     // refetch(); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
+  };
+
+  const {
+    register: boardReg,
+    handleSubmit: boardHandle,
+    setError: boardSetError,
+    formState: { errors: boardErrors },
+  } = useForm<IBoardData>();
+
+  const onBoardValid = (data: IBoardData) => {
+    axiosMutate(data);
   };
 
   return (
@@ -66,13 +108,44 @@ function App() {
         <button>확인</button>
       </form>
 
+      {/* <button onClick={axiosGetData}>정보</button> */}
       <ul>
-        {/* {data?.((user: IFormData, index: any) => (
-          <li key={index}>
-            {user.userPw}, {user.userId}
+        <li>{`RESULTCODE : ${data?.data.resultCode}`}</li>
+        <li>{`RESULT_MESSAGE : ${data?.data.resultMsg}`}</li>
+        {data?.data?.result?.map((res: IDetailProps) => (
+          <li key={res.boardSq}>
+            {`${res.boardContent} ${res.boardSq} ${res.boardTitle} ${res.userNm}`}
           </li>
-        ))} */}
+        ))}
       </ul>
+
+      <br />
+
+      <form
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          width: "300px",
+        }}
+        onSubmit={boardHandle(onBoardValid)}
+      >
+        <input
+          {...boardReg("boardTitle", {
+            required: "제목을 작성해야 합니다.",
+          })}
+          placeholder="제목"
+        />
+        <span>{boardErrors?.boardTitle?.message}</span>
+        <input
+          {...boardReg("boardContent", {
+            required: "글 내용을 작성해야 합니다.",
+          })}
+          placeholder="글"
+        />
+        <span>{boardErrors?.boardContent?.message}</span>
+
+        <button>작성하기</button>
+      </form>
     </div>
   );
 }

@@ -1,9 +1,11 @@
 import axios from "axios";
 import { useMutation } from "react-query";
 import { IBoardData, IFormData } from "./App";
+import { ISignUpData } from "./SignUp";
 
 export const API_URL = `https://nineto6.kro.kr:8080/api/user/login`;
 export const BOARD_URL = `https://nineto6.kro.kr:8080/api/board`;
+export const SIGN_URL = `https://nineto6.kro.kr:8080/api/user/signup`;
 // 변경된 URL 주소
 
 export async function getData() {
@@ -85,5 +87,15 @@ export const axiosPostData = async (data: IBoardData) => {
         localStorage.getItem("loginToken") || "{}"
       ),
     },
+  });
+};
+
+export const OnSignUpData = () => {
+  return useMutation(SignUpData);
+};
+
+export const SignUpData = async (data: ISignUpData) => {
+  return await axios.post(SIGN_URL, data).then((res) => {
+    console.log(res.data);
   });
 };

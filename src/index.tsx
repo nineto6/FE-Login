@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { QueryClient, QueryClientProvider } from "react-query";
-import App from "./App";
-
+import Router from "./Router";
 const testApi = new QueryClient();
 
 const root = ReactDOM.createRoot(
@@ -10,6 +9,6 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <QueryClientProvider client={testApi}>
-    <App />
+    <Router />
   </QueryClientProvider>
 );

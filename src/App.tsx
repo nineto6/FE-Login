@@ -2,13 +2,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation, useQuery } from "react-query";
 import styled from "styled-components";
-import {
-  axiosGetData,
-  getData,
-  OnAxiosPostData,
-  OnPostData,
-  postData,
-} from "./api";
+import { boardGetData, OnBoardPostData, OnFormPostData } from "./api";
 
 export interface IFormData {
   userId: String;
@@ -44,14 +38,14 @@ function App() {
   //   },
   // }); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
 
-  const { data, isLoading } = useQuery("infoData", axiosGetData, {
+  const { data, isLoading } = useQuery("infoData", boardGetData, {
     onSuccess: (data) => {
       console.log(data);
     },
   });
 
-  const { mutate } = OnPostData();
-  const { mutate: axiosMutate } = OnAxiosPostData();
+  const { mutate } = OnFormPostData();
+  const { mutate: axiosMutate } = OnBoardPostData();
 
   const {
     register,
@@ -108,7 +102,7 @@ function App() {
         <button>확인</button>
       </form>
 
-      {/* <button onClick={axiosGetData}>정보</button> */}
+      {/* <button onClick={boardGetData}>정보</button> */}
       <ul>
         <li>{`RESULTCODE : ${data?.data.resultCode}`}</li>
         <li>{`RESULT_MESSAGE : ${data?.data.resultMsg}`}</li>

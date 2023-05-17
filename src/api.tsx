@@ -3,41 +3,12 @@ import { useMutation } from "react-query";
 import { IBoardData, IFormData } from "./App";
 import { ISignUpData } from "./SignUp";
 
-export async function getData() {
+export async function boardGetData() {
   const request: HeadersInit = new Headers();
   let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
-  // 새 Header 에 받아서 JSON 형식으로 바꿔 사용
-  // JSON.parse 는 ts 내에서 || 로 빈 {} 값을 보내주어야 type error가 나지않음
 
   if (!token) {
-    throw new Error("error");
-  } else {
-    request.set("authorization", token);
-  }
-
-  return await fetch(`${process.env.REACT_APP_URL}/api/board`, {
-    method: "GET",
-    headers: request,
-  }).then((response) => {
-    // let ACCESS_TOKEN = response.headers.get("Authorization");
-    // if (ACCESS_TOKEN) {
-    //   localStorage.setItem("loginToken", ACCESS_TOKEN);
-    //   // authorization 이 존재할 경우 localStorage 에 leginToken 으로 ACCESS_TOKEN 임시저장
-    // }
-
-    // console.log(response.data);
-    response.json();
-  });
-}
-
-export async function axiosGetData() {
-  const request: HeadersInit = new Headers();
-  let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
-  // 새 Header 에 받아서 JSON 형식으로 바꿔 사용
-  // JSON.parse 는 ts 내에서 || 로 빈 {} 값을 보내주어야 type error가 나지않음
-
-  if (!token) {
-    throw new Error("error");
+    throw new Error("error, no token.");
   } else {
     request.set("authorization", token);
   }
@@ -49,11 +20,11 @@ export async function axiosGetData() {
   });
 }
 
-export const OnPostData = () => {
-  return useMutation(postData);
+export const OnFormPostData = () => {
+  return useMutation(formPostData);
 };
 
-export const postData = async (data: IFormData) => {
+export const formPostData = async (data: IFormData) => {
   return await axios
     .post(`${process.env.REACT_APP_URL}/api/user/login`, data)
     .then((response) => {
@@ -71,18 +42,22 @@ export const postData = async (data: IFormData) => {
     });
 };
 
-export const OnAxiosPostData = () => {
-  return useMutation(axiosPostData);
+export const OnBoardPostData = () => {
+  return useMutation(boardPostData);
 };
 
-export const axiosPostData = async (data: IBoardData) => {
-  return await axios.post(`${process.env.REACT_APP_URL}/api/board`, data, {
-    headers: {
-      Authorization: await JSON.parse(
-        localStorage.getItem("loginToken") || "{}"
-      ),
-    },
-  });
+export const boardPostData = async (data: IBoardData) => {
+  return await axios
+    .post(`${process.env.REACT_APP_URL}/api/board`, data, {
+      headers: {
+        Authorization: await JSON.parse(
+          localStorage.getItem("loginToken") || "{}"
+        ),
+      },
+    })
+    .catch((error) => {
+      console.log(error);
+    });
 };
 
 export const OnSignUpData = () => {

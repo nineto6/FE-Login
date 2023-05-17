@@ -3,11 +3,6 @@ import { useMutation } from "react-query";
 import { IBoardData, IFormData } from "./App";
 import { ISignUpData } from "./SignUp";
 
-export const API_URL = `https://nineto6.kro.kr:8080/api/user/login`;
-export const BOARD_URL = `https://nineto6.kro.kr:8080/api/board`;
-export const SIGN_URL = `https://nineto6.kro.kr:8080/api/user/signup`;
-// 변경된 URL 주소
-
 export async function getData() {
   const request: HeadersInit = new Headers();
   let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
@@ -20,7 +15,7 @@ export async function getData() {
     request.set("authorization", token);
   }
 
-  return await fetch(BOARD_URL, {
+  return await fetch(`${process.env.REACT_APP_URL}/api/board`, {
     method: "GET",
     headers: request,
   }).then((response) => {
@@ -47,7 +42,7 @@ export async function axiosGetData() {
     request.set("authorization", token);
   }
 
-  return axios.get(BOARD_URL, {
+  return axios.get(`${process.env.REACT_APP_URL}/api/board`, {
     headers: {
       Authorization: token,
     },
@@ -60,7 +55,7 @@ export const OnPostData = () => {
 
 export const postData = async (data: IFormData) => {
   return await axios
-    .post(API_URL, data)
+    .post(`${process.env.REACT_APP_URL}/api/user/login`, data)
     .then((response) => {
       // console.log(response);
       let ACCESS_TOKEN = JSON.stringify(response.headers["authorization"]);
@@ -81,7 +76,7 @@ export const OnAxiosPostData = () => {
 };
 
 export const axiosPostData = async (data: IBoardData) => {
-  return await axios.post(BOARD_URL, data, {
+  return await axios.post(`${process.env.REACT_APP_URL}/api/board`, data, {
     headers: {
       Authorization: await JSON.parse(
         localStorage.getItem("loginToken") || "{}"
@@ -95,7 +90,9 @@ export const OnSignUpData = () => {
 };
 
 export const SignUpData = async (data: ISignUpData) => {
-  return await axios.post(SIGN_URL, data).then((res) => {
-    console.log(res.data);
-  });
+  return await axios
+    .post(`${process.env.REACT_APP_URL}/api/user/signup`, data)
+    .then((res) => {
+      console.log(res.data);
+    });
 };

@@ -43,7 +43,7 @@ export default function SignUp() {
   };
 
   const checkId = async () => {
-    const url = `${process.env.REACT_APP_URL}/api/user/duplicheck`;
+    const url = `https://nineto6.kro.kr:8080/api/user/duplicheck`;
     await axios.get(`${url}?userId=${userIdValue}`).then((res) => {
       console.log(res);
       if (res.data.result == "false") {
@@ -78,9 +78,6 @@ export default function SignUp() {
           {...register("userPw", {
             required: "비밀번호를 작성해야 합니다.",
           })}
-          onChange={() => {
-            setChecker(false);
-          }}
         />
         <span>{errors?.userPw?.message}</span>
         <input

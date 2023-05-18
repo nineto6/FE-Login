@@ -10,7 +10,7 @@ const useRouter = () => {
       element: <App />,
     },
     {
-      path: "/signup",
+      path: "/login",
       element: <SignUp />,
     },
   ]);

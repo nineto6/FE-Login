@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Home from "./components/Home";
 
 function App() {
   const nav = useNavigate();
@@ -9,6 +10,8 @@ function App() {
 
   return (
     <div>
+      <Home />
+
       <h1>Welcome !</h1>
       <nav>
         <h4

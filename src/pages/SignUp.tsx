@@ -2,9 +2,9 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { useMutation } from "react-query";
 import { OnSignUpData } from "../api";
 import { useNavigate } from "react-router-dom";
+import Home from "../components/Home";
 
 const SignUpForm = styled.form`
   display: flex;
@@ -58,7 +58,8 @@ export default function SignUp() {
   };
 
   return (
-    <>
+    <div>
+      <Home />
       <SignUpForm onSubmit={handleSubmit(onValid)}>
         <input
           {...register("userId", {
@@ -90,6 +91,6 @@ export default function SignUp() {
         <span>{errors?.userNm?.message}</span>
         <button>submit</button>
       </SignUpForm>
-    </>
+    </div>
   );
 }

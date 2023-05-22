@@ -1,6 +1,7 @@
 import { useForm } from "react-hook-form";
 import { OnBoardPostData, boardGetData } from "../api";
 import { useQuery } from "react-query";
+import Home from "../components/Home";
 
 export interface IBoardData {
   boardTitle: string;
@@ -41,6 +42,8 @@ export default function Board() {
   };
   return (
     <div>
+      <Home />
+
       <form
         style={{
           display: "flex",

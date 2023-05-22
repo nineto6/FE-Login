@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form";
 import { OnFormPostData } from "../api";
+import Home from "../components/Home";
 
 export interface IFormData {
   userId: String;
@@ -22,6 +23,8 @@ export default function Login() {
   };
   return (
     <div>
+      <Home />
+
       <form
         style={{
           display: "flex",

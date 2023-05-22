@@ -1,7 +1,8 @@
 import axios from "axios";
 import { useMutation } from "react-query";
-import { IBoardData, IFormData } from "./App";
-import { ISignUpData } from "./SignUp";
+import { ISignUpData } from "./pages/SignUp";
+import { IFormData } from "./pages/Login";
+import { IBoardData } from "./pages/Board";
 
 export async function boardGetData() {
   const request: HeadersInit = new Headers();

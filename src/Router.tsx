@@ -1,7 +1,7 @@
 import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import App from "./App";
-import SignUp from "./SignUp";
+import SignUp from "./pages/SignUp";
 
 const useRouter = () => {
   const router = createBrowserRouter([

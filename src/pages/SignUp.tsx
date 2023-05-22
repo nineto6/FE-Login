@@ -2,9 +2,8 @@ import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import { IFormData } from "./App";
 import { useMutation } from "react-query";
-import { OnSignUpData } from "./api";
+import { OnSignUpData } from "../api";
 import { useNavigate } from "react-router-dom";
 
 const SignUpForm = styled.form`

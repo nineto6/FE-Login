@@ -24,10 +24,10 @@ export default function SignUp() {
   const [checker, setChecker] = useState(false);
 
   const {
-    register,
-    /*watch,*/ handleSubmit,
-    setError,
-    formState: { errors },
+    register: signRegister,
+    /*watch,*/ handleSubmit: signHandleSubmit,
+    setError: signSetError,
+    formState: { errors: signErrors },
   } = useForm<ISignUpData>();
 
   const { mutate } = OnSignUpData();
@@ -43,59 +43,69 @@ export default function SignUp() {
 
   const checkId = async () => {
     const url = `${process.env.REACT_APP_URL}/api/user/duplicheck`;
-    await axios
-      .get(`${url}?userId=${userIdValue}`)
-      .then((res) => {
-        console.log(res);
-        if (res.data.result == "false") {
-          setError(
-            "userId",
-            { message: "중복 아이디 입니다." },
-            { shouldFocus: true }
-          );
-        } else {
-          setChecker(true);
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
+
+    // console.log(userIdValue);
+
+    if (userIdValue === "") {
+      signSetError(
+        "userId",
+        { message: "아이디를 작성해야 합니다." },
+        { shouldFocus: true }
+      );
+    } else {
+      await axios
+        .get(`${url}?userId=${userIdValue}`)
+        .then((res) => {
+          console.log(res);
+          if (res.data.result == "false") {
+            signSetError(
+              "userId",
+              { message: "중복 아이디 입니다." },
+              { shouldFocus: true }
+            );
+          } else {
+            setChecker(true);
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
   };
 
   return (
-    <div>
+    <>
       <Home />
-      <SignUpForm onSubmit={handleSubmit(onValid)}>
+      <SignUpForm onSubmit={signHandleSubmit(onValid)}>
         <input
-          {...register("userId", {
+          {...signRegister("userId", {
             required: "아이디를 작성해야 합니다.",
           })}
           onChange={(event) => {
             setUserIdValue(event.target.value);
             // id 감지
-          }}
-        />
-        <span>
-          {checker ? "사용 가능한 아이디 입니다." : errors?.userId?.message}
-        </span>
-        <button onClick={checkId}>중복확인</button>
-        <input
-          {...register("userPw", {
-            required: "비밀번호를 작성해야 합니다.",
-          })}
-          onChange={() => {
+
             setChecker(false);
           }}
         />
-        <span>{errors?.userPw?.message}</span>
+        <span>
+          {checker ? "사용 가능한 아이디 입니다." : signErrors?.userId?.message}
+        </span>
+        <button onClick={checkId}>중복확인</button>
         <input
-          {...register("userNm", {
+          {...signRegister("userPw", {
+            required: "비밀번호를 작성해야 합니다.",
+          })}
+        />
+        <span>{signErrors?.userPw?.message}</span>
+        <input
+          {...signRegister("userNm", {
             required: "이릉을 작성해야 합니다.",
           })}
         />
-        <span>{errors?.userNm?.message}</span>
+        <span>{signErrors?.userNm?.message}</span>
         <button>submit</button>
       </SignUpForm>
-    </div>
+    </>
   );
 }

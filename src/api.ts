@@ -6,7 +6,7 @@ import { IBoardData } from "./pages/Board";
 
 export async function boardGetData() {
   const request: HeadersInit = new Headers();
-  let token = await JSON.parse(localStorage.getItem("loginToken") || "{}");
+  let token = await JSON.parse(localStorage.getItem("accessToken") || "{}");
 
   if (!token) {
     throw new Error("error, no token.");
@@ -16,7 +16,7 @@ export async function boardGetData() {
 
   return axios.get(`${process.env.REACT_APP_URL}/api/board`, {
     headers: {
-      Authorization: token,
+      Authorization: `Bearer ${token}`,
     },
   });
 }
@@ -29,14 +29,20 @@ export const formPostData = async (data: IFormData) => {
   return await axios
     .post(`${process.env.REACT_APP_URL}/api/user/login`, data)
     .then((response) => {
-      // console.log(response);
-      let ACCESS_TOKEN = JSON.stringify(response.headers["authorization"]);
+      console.log(response);
+      let ACCESS_TOKEN = JSON.stringify(
+        response.headers["access-token"]
+      ); /*.replace(/\"/gi, "")*/
       // JSON 형식이므로 JSON.stringify 를 사용해 주어야 한다. (*대소문자 주의*)
       // ACCESS_TOKEN 으로 초기화
       // console.log(ACCESS_TOKEN);
-      localStorage.setItem("loginToken", ACCESS_TOKEN);
 
-      console.log(localStorage.getItem("loginToken"));
+      let REFRESH_TOKEN = JSON.stringify(response.headers["refresh-token"]);
+
+      localStorage.setItem("accessToken", ACCESS_TOKEN);
+      localStorage.setItem("refreshToken", REFRESH_TOKEN);
+
+      // console.log(localStorage.getItem("accessToken"));
     })
     .catch((error) => {
       console.log(error);
@@ -48,12 +54,12 @@ export const OnBoardPostData = () => {
 };
 
 export const boardPostData = async (data: IBoardData) => {
+  let token = await JSON.parse(localStorage.getItem("accessToken") || "{}");
+
   return await axios
     .post(`${process.env.REACT_APP_URL}/api/board`, data, {
       headers: {
-        Authorization: await JSON.parse(
-          localStorage.getItem("loginToken") || "{}"
-        ),
+        Authorization: `Bearer ${token}`,
       },
     })
     .catch((error) => {

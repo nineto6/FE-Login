@@ -1,16 +1,38 @@
-import React from "react";
-import { useForm } from "react-hook-form";
-import { useMutation, useQuery } from "react-query";
-import styled from "styled-components";
-import { boardGetData, OnBoardPostData, OnFormPostData } from "./api";
-import Login from "./pages/Login";
-import Board from "./pages/Board";
+import { useNavigate } from "react-router-dom";
 
 function App() {
+  const nav = useNavigate();
+
+  const pageChange = (url: string) => {
+    nav(`${url}`);
+  };
+
   return (
     <div>
-      <Login />
-      <Board />
+      <h1>Welcome !</h1>
+      <nav>
+        <h4
+          onClick={() => {
+            pageChange("/login");
+          }}
+        >
+          Login
+        </h4>
+        <h4
+          onClick={() => {
+            pageChange("/board");
+          }}
+        >
+          Board
+        </h4>
+        <h4
+          onClick={() => {
+            pageChange("/signup");
+          }}
+        >
+          SignUp
+        </h4>
+      </nav>
     </div>
   );
 }

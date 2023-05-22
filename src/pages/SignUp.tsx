@@ -19,7 +19,7 @@ export interface ISignUpData {
 }
 
 export default function SignUp() {
-  const navigate = useNavigate();
+  const nav = useNavigate();
   const [userIdValue, setUserIdValue] = useState("");
   const [checker, setChecker] = useState(false);
 
@@ -37,24 +37,29 @@ export default function SignUp() {
       mutate(data);
 
       console.log("SUCCESS");
-      navigate("/");
+      nav("/");
     }
   };
 
   const checkId = async () => {
     const url = `${process.env.REACT_APP_URL}/api/user/duplicheck`;
-    await axios.get(`${url}?userId=${userIdValue}`).then((res) => {
-      console.log(res);
-      if (res.data.result == "false") {
-        setError(
-          "userId",
-          { message: "중복 아이디 입니다." },
-          { shouldFocus: true }
-        );
-      } else {
-        setChecker(true);
-      }
-    });
+    await axios
+      .get(`${url}?userId=${userIdValue}`)
+      .then((res) => {
+        console.log(res);
+        if (res.data.result == "false") {
+          setError(
+            "userId",
+            { message: "중복 아이디 입니다." },
+            { shouldFocus: true }
+          );
+        } else {
+          setChecker(true);
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

@@ -4,24 +4,45 @@ import App from "./App";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Board from "./pages/Board";
+import TokenRefresher from "./utils/TokenRefresher";
 
 const useRouter = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <App />,
+      element: (
+        <>
+          <TokenRefresher />
+          <App />
+        </>
+      ),
     },
     {
       path: "/signup",
-      element: <SignUp />,
+      element: (
+        <>
+          <TokenRefresher />
+          <SignUp />
+        </>
+      ),
     },
     {
       path: "/login",
-      element: <Login />,
+      element: (
+        <>
+          <TokenRefresher />
+          <Login />
+        </>
+      ),
     },
     {
       path: "/board",
-      element: <Board />,
+      element: (
+        <>
+          <TokenRefresher />
+          <Board />
+        </>
+      ),
     },
   ]);
 
@@ -30,5 +51,9 @@ const useRouter = () => {
 
 export default function Router() {
   const router = useRouter();
-  return <RouterProvider router={router} />;
+  return (
+    <>
+      <RouterProvider router={router} />
+    </>
+  );
 }

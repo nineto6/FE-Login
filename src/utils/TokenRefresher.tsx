@@ -1,20 +1,26 @@
 import axios from "axios";
-import { response } from "express";
+
+////////////////////////////////////////////////////
+//
+//    TOKEN REFRESHER
+//
+////////////////////////////////////////////////////
 
 const TokenRefresher = axios.create({
-  baseURL: `${process.env.REACT_APP_URL}`,
+  baseURL: process.env.REACT_APP_URL,
   headers: {
     "Content-Type": "application/json",
   },
 });
+// axios instance 로 관리하기
 
 TokenRefresher.interceptors.request.use(
   function (config) {
     const token = localStorage.getItem("accessToken");
 
     if (!token) {
-      config.headers["accessToken"] = null;
-      config.headers["refreshToken"] = null;
+      config.headers["access-token"] = null;
+      config.headers["refresh-token"] = null;
 
       console.log("NOT TOKEN");
       return config;
@@ -24,7 +30,7 @@ TokenRefresher.interceptors.request.use(
 
       config.headers["Authorization"] = `Bearer ${accessToken}`;
 
-      console.log(`Request Start : ${config}`);
+      console.log(`Request Start : ${config.headers.Authorization}`);
       return config;
     }
   },
@@ -35,43 +41,70 @@ TokenRefresher.interceptors.request.use(
 );
 
 TokenRefresher.interceptors.response.use(
-  function (response) {
-    console.log("get response", response);
-    return response;
-  },
-  async (error) => {
-    const {
-      config,
-      response: { status },
-    } = error;
-
-    if (status === 401) {
-      if (error.response.data.message === "Token Expired") {
-        const originalRequest = config;
+  async function (response) {
+    // console.log("get response", response);
+    if (response.data.status === 401) {
+      // token 에 문제가 생겼을 경우 401
+      if (response.data.message === "Token Expired") {
+        // token 문제 중 기간이 만료되었을 시
+        const originalRequest = response.config;
+        // 기존 요청 값을 변수로 저장
+        console.log("config", originalRequest);
         const refreshToken = await localStorage.getItem("refreshToken");
 
-        const { data } = await axios.post(
-          `${process.env.REACT_APP_URL}/reissue`,
-          {},
+        console.log("refreshToken", refreshToken);
+
+        const refRes = await axios.get(
+          `${process.env.REACT_APP_URL}/api/reissue`,
           { headers: { Authorization: `Bearer ${refreshToken}` } }
         );
+        //refresh-response refresh-token 값을 headers 에 다시 담아서 재요청
 
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          data;
+        console.log("refRes :", refRes);
 
-        await localStorage.multiSet([
-          ["accessToken", newAccessToken],
-          ["refreshToken", newRefreshToken],
-        ]);
+        const newAccessToken = refRes.headers["access-token"];
+        const newRefreshToken = refRes.headers["refresh-token"];
+
+        await localStorage.setItem("accessToken", newAccessToken);
+        await localStorage.setItem("refreshToken", newRefreshToken);
+        // 새로 받아온 access-token 과 refreshtoken 을 다시 localStorage에 담음
 
         originalRequest.headers.authorization = `Bearer ${newAccessToken}`;
         return axios(originalRequest);
+        // 기존의 요청 header.authorization 에 newAccessToken 을 담아 axios 요청
       }
     }
 
-    console.log("response error", error);
-    return Promise.reject(error);
+    return response;
   }
+  // async function (error) {
+  //   const { config, response } = error;
+  //   console.log("error : ", error);
+  //   if (response.status === 401) {
+  //     if (response.data.message === "Token Expired") {
+  //       const originalRequest = config;
+  //       console.log("config", originalRequest);
+  //       const refreshToken = await localStorage.getItem("refreshToken");
+  //       const { data } = await axios.post(
+  //         `${process.env.REACT_APP_URL}/reissue`,
+  //         {},
+  //         { headers: { Authorization: `Bearer ${refreshToken}` } }
+  //       );
+  //       const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+  //         data;
+  //       await localStorage.multiSet([
+  //         ["accessToken", newAccessToken],
+  //         ["refreshToken", newRefreshToken],
+  //       ]);
+  //       originalRequest.headers.authorization = `Bearer ${newAccessToken}`;
+  //       return axios(originalRequest);
+  //     }
+  //   }
+  //   console.log("response error", error);
+  //   return Promise.reject(error);
+  // }
 );
+
+// function(error) 부분은 우리가 설계한 방식과 다르므로 주석처리
 
 export default TokenRefresher;

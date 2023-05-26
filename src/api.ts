@@ -3,10 +3,11 @@ import { useMutation } from "react-query";
 import { ISignUpData } from "./pages/SignUp";
 import { IFormData } from "./pages/Login";
 import { IBoardData } from "./pages/Board";
+import TokenRefresher from "./utils/TokenRefresher";
 
 export async function boardGetData() {
   const request: HeadersInit = new Headers();
-  let token = await JSON.parse(localStorage.getItem("accessToken") || "{}");
+  let token = await localStorage.getItem("accessToken");
 
   if (!token) {
     throw new Error("error, no token.");
@@ -14,7 +15,7 @@ export async function boardGetData() {
     request.set("authorization", token);
   }
 
-  return axios.get(`${process.env.REACT_APP_URL}/api/board`, {
+  return TokenRefresher.get(`/api/board`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -26,18 +27,16 @@ export const OnFormPostData = () => {
 };
 
 export const formPostData = async (data: IFormData) => {
-  return await axios
-    .post(`${process.env.REACT_APP_URL}/api/user/login`, data)
+  return await TokenRefresher.post(`/api/user/login`, data)
     .then((response) => {
       console.log(response);
-      let ACCESS_TOKEN = JSON.stringify(
-        response.headers["access-token"]
-      ); /*.replace(/\"/gi, "")*/
+      let ACCESS_TOKEN =
+        response.headers["access-token"]; /*.replace(/\"/gi, "")*/
       // JSON 형식이므로 JSON.stringify 를 사용해 주어야 한다. (*대소문자 주의*)
       // ACCESS_TOKEN 으로 초기화
       // console.log(ACCESS_TOKEN);
 
-      let REFRESH_TOKEN = JSON.stringify(response.headers["refresh-token"]);
+      let REFRESH_TOKEN = response.headers["refresh-token"];
 
       localStorage.setItem("accessToken", ACCESS_TOKEN);
       localStorage.setItem("refreshToken", REFRESH_TOKEN);
@@ -56,15 +55,13 @@ export const OnBoardPostData = () => {
 export const boardPostData = async (data: IBoardData) => {
   let token = await JSON.parse(localStorage.getItem("accessToken") || "{}");
 
-  return await axios
-    .post(`${process.env.REACT_APP_URL}/api/board`, data, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-    .catch((error) => {
-      console.log(error);
-    });
+  return await TokenRefresher.post(`/api/board`, data, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  }).catch((error) => {
+    console.log(error);
+  });
 };
 
 export const OnSignUpData = () => {
@@ -72,9 +69,7 @@ export const OnSignUpData = () => {
 };
 
 export const SignUpData = async (data: ISignUpData) => {
-  return await axios
-    .post(`${process.env.REACT_APP_URL}/api/user/signup`, data)
-    .then((res) => {
-      console.log(res.data);
-    });
+  return await TokenRefresher.post(`/api/user/signup`, data).then((res) => {
+    console.log(res.data);
+  });
 };

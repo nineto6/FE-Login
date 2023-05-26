@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { OnSignUpData } from "../api";
 import { useNavigate } from "react-router-dom";
 import Home from "../components/Home";
+import TokenRefresher from "../utils/TokenRefresher";
 
 const SignUpForm = styled.form`
   display: flex;
@@ -42,7 +43,7 @@ export default function SignUp() {
   };
 
   const checkId = async () => {
-    const url = `${process.env.REACT_APP_URL}/api/user/duplicheck`;
+    const url = `/api/user/duplicheck`;
 
     // console.log(userIdValue);
 
@@ -53,8 +54,7 @@ export default function SignUp() {
         { shouldFocus: true }
       );
     } else {
-      await axios
-        .get(`${url}?userId=${userIdValue}`)
+      await TokenRefresher.get(`${url}?userId=${userIdValue}`)
         .then((res) => {
           console.log(res);
           if (res.data.result == "false") {

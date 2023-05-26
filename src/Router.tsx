@@ -4,7 +4,6 @@ import App from "./App";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
 import Board from "./pages/Board";
-import TokenRefresher from "./utils/TokenRefresher";
 
 const useRouter = () => {
   const router = createBrowserRouter([

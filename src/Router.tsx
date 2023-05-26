@@ -12,7 +12,6 @@ const useRouter = () => {
       path: "/",
       element: (
         <>
-          <TokenRefresher />
           <App />
         </>
       ),
@@ -21,7 +20,6 @@ const useRouter = () => {
       path: "/signup",
       element: (
         <>
-          <TokenRefresher />
           <SignUp />
         </>
       ),
@@ -30,7 +28,6 @@ const useRouter = () => {
       path: "/login",
       element: (
         <>
-          <TokenRefresher />
           <Login />
         </>
       ),
@@ -39,7 +36,6 @@ const useRouter = () => {
       path: "/board",
       element: (
         <>
-          <TokenRefresher />
           <Board />
         </>
       ),

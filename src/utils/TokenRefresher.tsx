@@ -1,69 +1,77 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { response } from "express";
 
-export default function Refresher() {
-  const nav = useNavigate();
+const TokenRefresher = axios.create({
+  baseURL: `${process.env.REACT_APP_URL}`,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-  useEffect(() => {
-    const refreshAPI = axios.create({
-      baseURL: ``,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+TokenRefresher.interceptors.request.use(
+  function (config) {
+    const token = localStorage.getItem("accessToken");
 
-    const interceptor = axios.interceptors.response.use(
-      function (response) {
-        return response;
-      },
+    if (!token) {
+      config.headers["accessToken"] = null;
+      config.headers["refreshToken"] = null;
 
-      async function (error) {
-        const originalConfig = error.config;
-        const msg = error.response.data.message;
-        const status = error.resonse.status;
+      console.log("NOT TOKEN");
+      return config;
+    } else {
+      const accessToken = localStorage.getItem("accessToken");
+      // const refreshToken = localStorage.getItem("refreshToken");
 
-        if (status == 401) {
-          if (msg == "accessToken expired") {
-            await axios({
-              url: ``,
-              method: "post",
-              headers: {
-                accessToken: localStorage.getItem("token"),
-                refreshToken: localStorage.getItem("refreshToken"),
-              },
-            })
-              .then((res) => {
-                localStorage.setItem("token", res.data.accessToken);
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
 
-                originalConfig.headers["Authorization"] = res.data.accessToken;
+      console.log(`Request Start : ${config}`);
+      return config;
+    }
+  },
+  function (error) {
+    console.log("request error", error);
+    return Promise.reject(error);
+  }
+);
 
-                return refreshAPI(originalConfig);
-              })
-              .then((res) => {
-                window.location.reload();
-              });
-          } else if (msg == "refresh token expired") {
-            localStorage.clear();
-            nav("/login");
-            window.alert("로그인이 만료되어 자동으로 로그아웃 되었습니다.");
-          } else if (msg == "mail token expired") {
-            window.alert(
-              "비밀번호 변경 시간이 만료되었습니다. 다시 요청해 주세요."
-            );
-          }
-        } else if (status == 400 || status == 404 || status == 409) {
-          window.alert(msg);
-        }
+TokenRefresher.interceptors.response.use(
+  function (response) {
+    console.log("get response", response);
+    return response;
+  },
+  async (error) => {
+    const {
+      config,
+      response: { status },
+    } = error;
 
-        return Promise.reject(error);
+    if (status === 401) {
+      if (error.response.data.message === "Token Expired") {
+        const originalRequest = config;
+        const refreshToken = await localStorage.getItem("refreshToken");
+
+        const { data } = await axios.post(
+          `${process.env.REACT_APP_URL}/reissue`,
+          {},
+          { headers: { Authorization: `Bearer ${refreshToken}` } }
+        );
+
+        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
+          data;
+
+        await localStorage.multiSet([
+          ["accessToken", newAccessToken],
+          ["refreshToken", newRefreshToken],
+        ]);
+
+        originalRequest.headers.authorization = `Bearer ${newAccessToken}`;
+        return axios(originalRequest);
       }
-    );
+    }
 
-    return () => {
-      axios.interceptors.response.eject(interceptor);
-    };
-  }, []);
+    console.log("response error", error);
+    return Promise.reject(error);
+  }
+);
 
-  return <></>;
-}
+export default TokenRefresher;

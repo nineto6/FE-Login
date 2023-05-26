@@ -53,7 +53,7 @@ export const OnBoardPostData = () => {
 };
 
 export const boardPostData = async (data: IBoardData) => {
-  let token = await JSON.parse(localStorage.getItem("accessToken") || "{}");
+  let token = await localStorage.getItem("accessToken");
 
   return await TokenRefresher.post(`/api/board`, data, {
     headers: {

@@ -1,8 +1,20 @@
 import { useNavigate } from "react-router-dom";
 import Home from "./components/Home";
+import Logout from "./pages/Logout";
+import { useEffect, useState } from "react";
+import Login from "./pages/Login";
 
 function App() {
+  const [isLogin, setIsLogin] = useState<boolean | null>();
   const nav = useNavigate();
+
+  const token = localStorage.getItem("accessToken");
+
+  useEffect(() => {
+    if (token) {
+      setIsLogin(true);
+    } else setIsLogin(false);
+  }, [token]);
 
   const pageChange = (url: string) => {
     nav(`${url}`);
@@ -14,13 +26,11 @@ function App() {
 
       <h1>Welcome !</h1>
       <nav>
-        <h4
-          onClick={() => {
-            pageChange("/login");
-          }}
-        >
-          Login
-        </h4>
+        {isLogin ? (
+          <Logout logout={setIsLogin} />
+        ) : (
+          <Login login={setIsLogin} />
+        )}
         <h4
           onClick={() => {
             pageChange("/board");

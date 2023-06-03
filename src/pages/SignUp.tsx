@@ -43,7 +43,7 @@ export default function SignUp() {
   };
 
   const checkId = async () => {
-    const url = `/api/user/duplicheck`;
+    const url = `/api/users/duplicheck`;
 
     // console.log(userIdValue);
 

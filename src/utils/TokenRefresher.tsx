@@ -55,7 +55,7 @@ TokenRefresher.interceptors.response.use(
         console.log("refreshToken", refreshToken);
 
         const refRes = await axios.get(
-          `${process.env.REACT_APP_URL}/api/reissue`,
+          `${process.env.REACT_APP_URL}/api/users/reissue`,
           { headers: { Authorization: `Bearer ${refreshToken}` } }
         );
         //refresh-response refresh-token 값을 headers 에 다시 담아서 재요청
@@ -86,7 +86,7 @@ TokenRefresher.interceptors.response.use(
   //       console.log("config", originalRequest);
   //       const refreshToken = await localStorage.getItem("refreshToken");
   //       const { data } = await axios.post(
-  //         `${process.env.REACT_APP_URL}/reissue`,
+  //         `${process.env.REACT_APP_URL}/users/reissue`,
   //         {},
   //         { headers: { Authorization: `Bearer ${refreshToken}` } }
   //       );

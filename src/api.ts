@@ -27,7 +27,7 @@ export const OnFormPostData = () => {
 };
 
 export const formPostData = async (data: IFormData) => {
-  return await TokenRefresher.post(`/api/user/login`, data)
+  return await TokenRefresher.post(`/api/users/login`, data)
     .then((response) => {
       console.log(response);
       let ACCESS_TOKEN =
@@ -69,7 +69,7 @@ export const OnSignUpData = () => {
 };
 
 export const SignUpData = async (data: ISignUpData) => {
-  return await TokenRefresher.post(`/api/user/signup`, data).then((res) => {
+  return await TokenRefresher.post(`/api/users/signup`, data).then((res) => {
     console.log(res.data);
   });
 };

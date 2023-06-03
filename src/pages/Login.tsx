@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { OnFormPostData } from "../api";
-import Home from "../components/Home";
 import { useNavigate } from "react-router-dom";
 
 export interface IFormData {
@@ -8,7 +7,7 @@ export interface IFormData {
   userPw?: String;
 }
 
-export default function Login() {
+export default function Login({ login }: any) {
   const nav = useNavigate();
 
   const {
@@ -20,16 +19,15 @@ export default function Login() {
 
   const { mutate } = OnFormPostData();
 
-  const onValid = (data: IFormData) => {
-    mutate(data);
+  const onValid = async (data: IFormData) => {
+    await mutate(data);
     // refetch(); // 2023.05.02 현재 GET 요청부분이 없으므로 주석처리
+    login(true);
 
     nav("/");
   };
   return (
     <div>
-      <Home />
-
       <form
         style={{
           display: "flex",
